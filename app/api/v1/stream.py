@@ -8,7 +8,7 @@ from typing import Optional
 from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect, status
 from sqlalchemy import select
 
-from app.database import async_session_factory
+import app.database as database_module
 from app.models.project import Project
 from app.models.user import User
 from app.services.aggregation import get_top_events_window
@@ -38,7 +38,7 @@ async def live_event_stream(
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION, reason="Invalid or expired token")
         return
 
-    async with async_session_factory() as db:
+    async with database_module.async_session_factory() as db:
         user = (await db.execute(select(User).where(User.id == user_id))).scalar_one_or_none()
         if not user:
             await websocket.close(code=status.WS_1008_POLICY_VIOLATION, reason="User not found")
@@ -56,7 +56,7 @@ async def live_event_stream(
 
     try:
         while True:
-            async with async_session_factory() as db:
+            async with database_module.async_session_factory() as db:
                 top_events = await get_top_events_window(
                     session=db,
                     project_id=project_id,

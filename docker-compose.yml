@@ -4,7 +4,7 @@ services:
     container_name: pulseboard-postgres
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pulseboard_dev_password}
       POSTGRES_DB: pulseboard
     ports:
       - "5432:5432"
@@ -37,7 +37,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/pulseboard
+      DATABASE_URL: postgresql+asyncpg://postgres:${POSTGRES_PASSWORD:-pulseboard_dev_password}@postgres:5432/pulseboard
       REDIS_URL: redis://redis:6379/0
       PROJECT_NAME: "Pulseboard API"
       VERSION: "1.0.0"
@@ -53,7 +53,7 @@ services:
       WORKER_POLL_INTERVAL_MS: "1000"
       WORKER_COMPACTION_INTERVAL_SECONDS: "60"
       WORKER_RETENTION_INTERVAL_SECONDS: "3600"
-      JWT_SECRET_KEY: "pulseboard-super-secret-key-change-in-production-1234567890"
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-pulseboard_dev_jwt_secret_change_me}
       JWT_ALGORITHM: "HS256"
       JWT_ACCESS_TOKEN_EXPIRE_MINUTES: "1440"
       RATE_LIMIT_PER_MINUTE: "1000"
@@ -70,7 +70,7 @@ services:
     build: .
     container_name: pulseboard-worker
     environment:
-      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/pulseboard
+      DATABASE_URL: postgresql+asyncpg://postgres:${POSTGRES_PASSWORD:-pulseboard_dev_password}@postgres:5432/pulseboard
       REDIS_URL: redis://redis:6379/0
       PROJECT_NAME: "Pulseboard API"
       VERSION: "1.0.0"
@@ -86,7 +86,7 @@ services:
       WORKER_POLL_INTERVAL_MS: "1000"
       WORKER_COMPACTION_INTERVAL_SECONDS: "60"
       WORKER_RETENTION_INTERVAL_SECONDS: "3600"
-      JWT_SECRET_KEY: "pulseboard-super-secret-key-change-in-production-1234567890"
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-pulseboard_dev_jwt_secret_change_me}
       JWT_ALGORITHM: "HS256"
       JWT_ACCESS_TOKEN_EXPIRE_MINUTES: "1440"
       RATE_LIMIT_PER_MINUTE: "1000"
